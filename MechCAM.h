@@ -16,14 +16,37 @@
 */
 
 
-#include <QtGui/QApplication>
-#include "MechCAM.h"
+#ifndef MECHCAM_H
+#define MECHCAM_H
 
+#include <QtGui/QMainWindow>
+#include <qmenu.h>
+#include "caddrawing.h"
 
-int main(int argc, char** argv)
+class MechCAM : public QMainWindow
 {
-    QApplication app(argc, argv);
-    MechCAM foo;
-    foo.show();
-    return app.exec();
-}
+Q_OBJECT
+public:
+    MechCAM();
+    virtual ~MechCAM();
+private:
+    QMenu *fileMenu;
+    QMenu *editMenu;
+    QMenu *viewMenu;
+    QMenu *analyzeMenu;
+    QMenu *createMenu;
+    QMenu *solidsMenu;
+    QMenu *transformMenu;
+    QMenu *machineMenu;
+    QMenu *toolpathsMenu;
+    QMenu *screenMenu;
+    QMenu *settingsMenu;
+    QMenu *helpMenu;
+    CADDrawing* drawing;
+    void buildMenu();
+private slots:
+    void showBGColorDialog();
+    void showCreatePointDialog();
+};
+
+#endif // MECHCAM_H
