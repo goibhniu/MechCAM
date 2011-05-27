@@ -1,4 +1,7 @@
 /*
+    <one line to give the program's name and a brief idea of what it does.>
+    Copyright (C) 2011  Larry W Housner <gobhain@gsarmail.com>
+
             This file is part of MechCAM.
 
     MechCAM is free software: you can redistribute it and/or modify
@@ -15,57 +18,24 @@
     along with MechCAM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+#ifndef LINE_H
+#define LINE_H
+
 #include "point.h"
 
-Point::Point()
+class Line
 {
-  prev = 0;
-  next = 0;
-  X = 0;
-  Y = 0;
-  Z = 0;
-}
 
-Point::Point(double x, double y, double z)
-{
-  prev = 0;
-  next = 0;
-  X = x;
-  Y = y;
-  Z = z;
-}
+  public:
+    Line(double xi, double yi, double zi, double xe, double ye, double ze);
+    Line(Line* parent, double xi, double yi, double zi, double xe, double ye, double ze);
+    virtual ~Line();
+    Point unit_vector;
+    Point start_point;
+    double length;
+    Line* next;
+    Line* prev;
+};
 
-
-Point::Point(Point* parent, double x, double y, double z)
-{
-  parent->next = this;
-  prev = parent;
-  next = 0;
-  X = x;
-  Y = y;
-  Z = z;
-
-}
-
-Point::~Point()
-{
-  if (next != 0) {
-    if ( prev !=0 ){
-      next->prev = prev;
-    } else {
-      next->prev = 0;
-    }
-  }
-  if (prev != 0) {
-    if ( next != 0 ) {
-      prev->next = next;
-    } else {
-      prev->next = 0;
-    }
-  }
-//  free(this);
-}
-
-
-
-//#include "point.moc"
+#endif // LINE_H

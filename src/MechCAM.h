@@ -15,57 +15,38 @@
     along with MechCAM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "point.h"
 
-Point::Point()
+#ifndef MECHCAM_H
+#define MECHCAM_H
+
+#include <QtGui/QMainWindow>
+#include <qmenu.h>
+#include "caddrawing.h"
+
+class MechCAM : public QMainWindow
 {
-  prev = 0;
-  next = 0;
-  X = 0;
-  Y = 0;
-  Z = 0;
-}
+Q_OBJECT
+public:
+    MechCAM();
+    virtual ~MechCAM();
+private:
+    QMenu *fileMenu;
+    QMenu *editMenu;
+    QMenu *viewMenu;
+    QMenu *analyzeMenu;
+    QMenu *createMenu;
+    QMenu *solidsMenu;
+    QMenu *transformMenu;
+    QMenu *machineMenu;
+    QMenu *toolpathsMenu;
+    QMenu *screenMenu;
+    QMenu *settingsMenu;
+    QMenu *helpMenu;
+    CADDrawing* drawing;
+    void buildMenu();
+private slots:
+    void showBGColorDialog();
+    void showCreatePointDialog();
+};
 
-Point::Point(double x, double y, double z)
-{
-  prev = 0;
-  next = 0;
-  X = x;
-  Y = y;
-  Z = z;
-}
-
-
-Point::Point(Point* parent, double x, double y, double z)
-{
-  parent->next = this;
-  prev = parent;
-  next = 0;
-  X = x;
-  Y = y;
-  Z = z;
-
-}
-
-Point::~Point()
-{
-  if (next != 0) {
-    if ( prev !=0 ){
-      next->prev = prev;
-    } else {
-      next->prev = 0;
-    }
-  }
-  if (prev != 0) {
-    if ( next != 0 ) {
-      prev->next = next;
-    } else {
-      prev->next = 0;
-    }
-  }
-//  free(this);
-}
-
-
-
-//#include "point.moc"
+#endif // MECHCAM_H
