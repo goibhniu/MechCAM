@@ -11,7 +11,9 @@ set(MechCAM_SRCS
     src/MechCAM.cpp
     src/main.cpp
     src/toolpath.cpp
-    src/contourtoolpath.cpp)
+    src/contourtoolpath.cpp
+    src/operationsmanager.cpp
+)
 qt4_automoc(${MechCAM_SRCS})
 add_executable(MechCAM ${MechCAM_SRCS})
 target_link_libraries(MechCAM ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} QtOpenGL)

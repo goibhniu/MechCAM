@@ -29,7 +29,7 @@
 #include <QtGui/QColorDialog>
 #include <QGLWidget>
 #include "caddrawing.h"
-
+#include "operationsmanager.h"
 
 MechCAM::MechCAM()
 {
