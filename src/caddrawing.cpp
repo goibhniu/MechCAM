@@ -38,9 +38,8 @@ CADDrawing::CADDrawing( int timerInterval, QWidget* parent, char* name ): QGLWid
 
 void CADDrawing::initializeGL()
 {
-        ClearBlue = 128;
-        ClearGreen = 0;
-        ClearRed = 0;
+        QSettings settings;
+
         transX = 0;
         transY = 0;
         transZ = 0;
@@ -52,7 +51,8 @@ void CADDrawing::initializeGL()
         glLoadIdentity();
         glViewport(0, 0, this->width(), this->height());
 //        glClearColor(0.0, 0.0, 0.5, 1.0);
-        qglClearColor( QColor(ClearRed,ClearGreen,ClearBlue));
+        QColor bgcolor = settings.value("drawingarea/bgcolor").value<QColor>();
+        qglClearColor( bgcolor );
         glDisable(GL_NORMALIZE);
         glEnable(GL_DEPTH_TEST);
         glShadeModel(GL_SMOOTH);
@@ -203,7 +203,8 @@ void CADDrawing::keyPressEvent(QKeyEvent* event)
        updateGL();
    }
    if (event->key() == Qt::Key_Minus) {
-      zoomlevel -= 0.011;
+      zoomlevel -= 0.01;
+
       updateGL();
    }
    if (event->key() == Qt::Key_Plus) {

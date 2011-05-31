@@ -22,6 +22,8 @@
 #include <QtGui/QMainWindow>
 #include <qmenu.h>
 #include "caddrawing.h"
+#include "operationsmanager.h"
+#include "systemconfiguration.h"
 
 class MechCAM : public QMainWindow
 {
@@ -43,10 +45,15 @@ private:
     QMenu *settingsMenu;
     QMenu *helpMenu;
     CADDrawing* drawing;
+    OperationsManager* ops_man;
+    SystemConfiguration* sys_config;
     void buildMenu();
 private slots:
     void showBGColorDialog();
     void showCreatePointDialog();
+    void notImplementedMessage();
+    void about();
+    void showSysConfig();
 };
 
 #endif // MECHCAM_H
