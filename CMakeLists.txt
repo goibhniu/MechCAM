@@ -15,9 +15,23 @@ set(MechCAM_SRCS
     src/operationsmanager.cpp
     src/machine.cpp
     src/systemconfiguration.cpp
+    src/stocksetup.cpp
+    src/fileprocessor.cpp
+    src/STEPNC_Write/ncfunc.cxx
+    src/STEPNC_Write/partno.cxx
+    src/STEPNC_Write/property.cxx
+    src/STEPNC_Write/speed.cxx
+    src/STEPNC_Write/coolant.cxx
+    src/STEPNC_Write/cutter.cxx
+    src/STEPNC_Write/goto.cxx
+    src/STEPNC_Write/idlist.cxx
+    src/STEPNC_Write/measures.cxx
+    src/STEPNC_Write/units.cxx
+    src/STEPNC_Write/STEPNCWrite.cxx
+    src/APT_Write/APTWrite.cpp
+    src/APT_Read/APTRead.cpp
 )
-set(MechCAM_RCS MechCAM.qrc)
-QT4_ADD_RESOURCES( MechCAM_RC_SRCS ${MechCAM_RCS} )
+
 qt4_automoc(${MechCAM_SRCS})
-add_executable(MechCAM ${MechCAM_SRCS} ${MechCAM_RC_SRCS})
+add_executable(MechCAM ${MechCAM_SRCS})
 target_link_libraries(MechCAM ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} QtOpenGL)

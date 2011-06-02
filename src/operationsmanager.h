@@ -3,7 +3,9 @@
 
 #include <QWidget>
 #include <QTreeWidget>
+#include <QSettings>
 #include "machine.h"
+#include "stocksetup.h"
 
 
 
@@ -22,6 +24,11 @@ public slots:
  //   void setFallbacksEnabled(bool enabled);
  //   void maybeRefresh();
  //   void refresh();
+    void doSomething(QTreeWidgetItem *item, int column);
+    void stockUpdate(double xdim, double ydim, double zdim, double xoff, double yoff, double zoff);
+
+signals:
+    void stockUpdated(double xdim, double ydim, double zdim, double xoff, double yoff, double zoff);
 
 protected:
  //   bool event(QEvent *event);
@@ -30,15 +37,11 @@ private slots:
  //   void updateSetting(QTreeWidgetItem *item);
 
 private:
- //   void updateChildItems(QTreeWidgetItem *parent);
- //   QTreeWidgetItem *createItem(const QString &text, QTreeWidgetItem *parent,
- //                               int index);
- //   QTreeWidgetItem *childAt(QTreeWidgetItem *parent, int index);
- //   int childCount(QTreeWidgetItem *parent);
- //   int findChild(QTreeWidgetItem *parent, const QString &text, int startIndex);
- //   void moveItemForward(QTreeWidgetItem *parent, int oldIndex, int newIndex);
+
     void build_manager();
-    //QSettings *settings;
+    void showStockSetup();
+    QSettings *settings;
+    StockSetup      *stock_setup;
     QTreeWidgetItem *ops;
     QTreeWidgetItem *setup;
     QTreeWidgetItem *stock;

@@ -36,8 +36,11 @@ public:
   int ClearRed;
   int ClearBlue;
   int ClearGreen;
+  void setStockOrigin(double x, double y, double z);
+  void setStockSize(double width, double length, double thickness);
   void addPoint(float x, float y, float z);
   void addLine(double xi, double yi, double zi, double xe, double ye, double ze);
+  int stockVisible;
 protected:
   void initializeGL();
   void resizeGL( int w, int h );
@@ -48,6 +51,7 @@ protected:
 
 protected slots:
   void timeOut();
+  void changeStock(double x_dim, double y_dim, double z_dim, double x_off, double y_off, double z_off);
 
 private:
   QTimer *m_timer;
@@ -55,10 +59,18 @@ private:
   void draw_points();
   void draw_lines();
   void draw_circles(float i, float j, float k, float r);
+  void draw_stock();
+  void draw_scale_marker();
   double transX;
   double transY;
   double transZ;
   double zoomlevel;
+  double stock_origin_x;
+  double stock_origin_y;
+  double stock_origin_z;
+  double stock_xdim;
+  double stock_ydim;
+  double stock_zdim;
   int curr_width;
   int curr_height;
   Point* points;

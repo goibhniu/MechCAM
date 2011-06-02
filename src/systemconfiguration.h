@@ -4,11 +4,19 @@
 #include <QDialog>
 #include <QTreeWidget>
 
+class QCheckBox;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+
+
+
+
 class SystemConfiguration : public QDialog
 {
     Q_OBJECT
 public:
-    explicit SystemConfiguration(QWidget *parent = 0);
+    SystemConfiguration(QWidget *parent = 0);
 
 signals:
 

@@ -45,7 +45,8 @@ MechCAM::MechCAM()
     drawing = new CADDrawing(0,this,0);
     ops_man = new OperationsManager(splitter);
     statusBar();
-
+    connect(ops_man,SIGNAL(stockUpdated(double,double,double,double,double,double)),
+             drawing,SLOT(changeStock(double,double,double,double,double,double)));
  //   QLabel* l = new QLabel( splitter );
  //   l->setText( "Hello World!" );
     splitter->addWidget( ops_man );
@@ -216,7 +217,7 @@ void MechCAM::showCreatePointDialog()
 void MechCAM::showSysConfig()
 {
     sys_config = new SystemConfiguration(this);
-    //sys_config->exec();
+    sys_config->exec();
 }
 
 void MechCAM::about()

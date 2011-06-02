@@ -54,8 +54,9 @@ void CADDrawing::initializeGL()
         QColor bgcolor = settings.value("drawingarea/bgcolor").value<QColor>();
         qglClearColor( bgcolor );
         glDisable(GL_NORMALIZE);
-        glEnable(GL_DEPTH_TEST);
+        //glEnable(GL_DEPTH_TEST);
         glShadeModel(GL_SMOOTH);
+        glDepthRange(0.0f,1.0f);
         draw_Axes();
         addPoint(1,1,0);
         addPoint(2,2,0);
@@ -100,12 +101,16 @@ void CADDrawing::paintGL()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
   glTranslated(transX,transY,transZ);
-  glScalef(((float)this->height()/(float)this->width())*zoomlevel, 1*zoomlevel, 1* zoomlevel);
+  glScalef(((float)this->physicalDpiX()/(float)this->width())*zoomlevel,((float)this->physicalDpiY()/(float)this->height())*zoomlevel, 1* zoomlevel);
+  glRotatef(asin(tan(30)),0.0,0.0f, 1.0f);
   draw_Axes();
+  draw_stock();
   draw_points();
   draw_lines();
   draw_circles(14,2,0,3);
   draw_circles(12,10,0,2);
+  draw_scale_marker();
+  renderText(50,50,QString::number(zoomlevel,'f',-1));
   glMatrixMode(GL_MODELVIEW);
 }
 
@@ -189,7 +194,55 @@ void CADDrawing::draw_circles(float i, float j, float k, float r)
     glEnd();
 }
 
+void CADDrawing::draw_stock()
+{
+    glBegin(GL_LINES);
+        glColor3f(1.0,0,0);
+// Draw Lower Stock Surface
+        glVertex3f(0-stock_origin_x,0-stock_origin_y,0-stock_origin_z);
+        glVertex3f(stock_xdim-stock_origin_x,0-stock_origin_y,0-stock_origin_z);
+        glVertex3f(stock_xdim-stock_origin_x,0-stock_origin_y,0-stock_origin_z);
+        glVertex3f(stock_xdim-stock_origin_x,stock_ydim-stock_origin_y,0-stock_origin_z);
+        glVertex3f(stock_xdim-stock_origin_x,stock_ydim-stock_origin_y,0-stock_origin_z);
+        glVertex3f(0-stock_origin_x,stock_ydim-stock_origin_y,0-stock_origin_z);
+        glVertex3f(0-stock_origin_x,stock_ydim-stock_origin_y,0-stock_origin_z);
+        glVertex3f(0-stock_origin_x,0-stock_origin_y,0-stock_origin_z);
+// Draw Upper Stock Surface
+        glVertex3f(0-stock_origin_x,0-stock_origin_y,-stock_zdim-stock_origin_z);
+        glVertex3f(stock_xdim-stock_origin_x,0-stock_origin_y,-stock_zdim-stock_origin_z);
+        glVertex3f(stock_xdim-stock_origin_x,0-stock_origin_y,-stock_zdim-stock_origin_z);
+        glVertex3f(stock_xdim-stock_origin_x,stock_ydim-stock_origin_y,-stock_zdim-stock_origin_z);
+        glVertex3f(stock_xdim-stock_origin_x,stock_ydim-stock_origin_y,-stock_zdim-stock_origin_z);
+        glVertex3f(0-stock_origin_x,stock_ydim-stock_origin_y,-stock_zdim-stock_origin_z);
+        glVertex3f(0-stock_origin_x,stock_ydim-stock_origin_y,-stock_zdim-stock_origin_z);
+        glVertex3f(0-stock_origin_x,0-stock_origin_y,-stock_zdim-stock_origin_z);
+// Draw Stock Corners
+        glVertex3f(0-stock_origin_x,0-stock_origin_y,0-stock_origin_z);
+        glVertex3f(0-stock_origin_x,0-stock_origin_y,-stock_zdim-stock_origin_z);
+        glVertex3f(stock_xdim-stock_origin_x,0-stock_origin_y,0-stock_origin_z);
+        glVertex3f(stock_xdim-stock_origin_x,0-stock_origin_y,-stock_zdim-stock_origin_z);
+        glVertex3f(stock_xdim-stock_origin_x,stock_ydim-stock_origin_y,0-stock_origin_z);
+        glVertex3f(stock_xdim-stock_origin_x,stock_ydim-stock_origin_y,-stock_zdim-stock_origin_z);
+        glVertex3f(0-stock_origin_x,stock_ydim-stock_origin_y,0-stock_origin_z);
+        glVertex3f(0-stock_origin_x,stock_ydim-stock_origin_y,-stock_zdim-stock_origin_z);
+    glEnd();
+}
 
+void CADDrawing::draw_scale_marker()
+{
+    int xscale,yscale;
+
+    xscale = this->width()/this->physicalDpiX();
+    yscale = this->height()/this->physicalDpiY();
+    renderText(this->width()-75,this->height()-100,QString::number(xscale,10));
+    renderText(this->width()-75,this->height()-50,QString::number(yscale,10));
+    renderText(25,this->height()-100,QString::number(transX,'f',-1));
+    renderText(25,this->height()-50,QString::number(transY,'f',-1));
+    glBegin(GL_LINES);
+        glVertex3d((xscale-1)-(transX*xscale),(0.5*yscale)-(1*yscale)-(transY*yscale),0);
+        glVertex3d(xscale-(transX*xscale),(0.5*yscale)-(1*yscale)-(transY*yscale),0);
+    glEnd();
+}
 
 
 void CADDrawing::keyPressEvent(QKeyEvent* event)
@@ -257,6 +310,14 @@ void CADDrawing::addLine(double xi, double yi, double zi, double xe, double ye, 
   }
 }
 
-
+void CADDrawing::changeStock(double x_dim, double y_dim, double z_dim, double x_off, double y_off, double z_off)
+{
+    stock_origin_x = x_off;
+    stock_origin_y = y_off;
+    stock_origin_z = z_off;
+    stock_xdim = x_dim;
+    stock_ydim = y_dim;
+    stock_zdim = z_dim;
+}
 
 #include "caddrawing.moc"
