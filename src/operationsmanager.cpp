@@ -28,6 +28,10 @@ void OperationsManager::build_manager()
     stock->setText(0,tr("Stock Setup"));
     safety = new QTreeWidgetItem(setup);
     safety->setText(0,tr("Safety Zone"));
+    vars = new QTreeWidgetItem(this);
+    vars->setText(0,tr("Variables"));
+    Geometry = new QTreeWidgetItem(this);
+    Geometry->setText(0,tr("Geometry"));
     ops = new QTreeWidgetItem(this);
     ops->setText(0,tr("Toolpaths"));
     stock_setup = new StockSetup(this);

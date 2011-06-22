@@ -19,4 +19,5 @@
 
 FileProcessor::FileProcessor(CADDrawing *document)
 {
+    this->drawing = document;
 }

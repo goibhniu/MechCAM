@@ -15,26 +15,23 @@
     along with MechCAM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FILEPROCESSOR_H
-#define FILEPROCESSOR_H
+#ifndef VARIABLE_H
+#define VARIABLE_H
 
-#include "caddrawing.h"
-#include "STEPNC_Write/STEPNCWrite.h"
-#include "APT_Write/APTWrite.h"
-#include "APT_Read/APTRead.h"
 
-class FileProcessor
+class Variable
 {
-public:
-    FileProcessor(CADDrawing *document);
-    int fileOpen(char *fname);
-    int fileClose();
 
-private:
-    CADDrawing  *drawing;
-    STEPNCWrite *stpwriter;
-    APTWrite    *aptwrite;
-    APTRead     *aptread;
+  public:
+    Variable();
+    Variable(char *name, char *value);
+    Variable(Variable* parent, char *name, char *value);
+    virtual ~Variable();
+    double X;
+    double Y;
+    double Z;
+    Variable* next;
+    Variable* prev;
 };
 
-#endif // FILEPROCESSOR_H
+#endif // VARIABLE_H

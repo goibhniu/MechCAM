@@ -1,6 +1,9 @@
 project(MechCAM)
 cmake_minimum_required(VERSION 2.6)
 find_package(Qt4 REQUIRED)
+find_package(BISON)
+find_package(FLEX)
+
 
 include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -17,6 +20,7 @@ set(MechCAM_SRCS
     src/systemconfiguration.cpp
     src/stocksetup.cpp
     src/fileprocessor.cpp
+    src/variable.cpp
     src/STEPNC_Write/ncfunc.cxx
     src/STEPNC_Write/partno.cxx
     src/STEPNC_Write/property.cxx
@@ -30,8 +34,14 @@ set(MechCAM_SRCS
     src/STEPNC_Write/STEPNCWrite.cxx
     src/APT_Write/APTWrite.cpp
     src/APT_Read/APTRead.cpp
+
+
 )
 
 qt4_automoc(${MechCAM_SRCS})
-add_executable(MechCAM ${MechCAM_SRCS})
-target_link_libraries(MechCAM ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} QtOpenGL)
+add_executable(MechCAM ${MechCAM_SRCS}
+    ${FLEX_MyScanner_OUTPUTS}
+    ${BISON_MyParser_OUTPUTS}
+
+)
+target_link_libraries(MechCAM ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} QtOpenGL fl)

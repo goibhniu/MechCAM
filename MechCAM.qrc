@@ -1,6 +1,3 @@
 <RCC>
-    <qresource prefix="/img">
-        <file alias="quit.png">images/system-log-out.png</file>
-        <file alias="new.png">images/document-new.png</file>
-    </qresource>
+    <qresource prefix="/img"/>
 </RCC>

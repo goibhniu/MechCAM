@@ -48,6 +48,8 @@ private:
     QTreeWidgetItem *files;
     QTreeWidgetItem *safety;
     QTreeWidgetItem *tools;
+    QTreeWidgetItem *vars;
+    QTreeWidgetItem *Geometry;
     //QTimer refreshTimer;
     bool autoRefresh;
     QIcon groupIcon;

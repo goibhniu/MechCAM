@@ -77,6 +77,9 @@ void MechCAM::buildMenu()
     QAction* actionCreatePoint = new QAction(this);
     actionCreatePoint->setText("Point");
     connect(actionCreatePoint,SIGNAL(triggered()), SLOT(showCreatePointDialog()));
+    QAction* actionCreateVariable = new QAction(this);
+    actionCreateVariable->setText("Variable");
+    connect(actionCreateVariable,SIGNAL(triggered()), SLOT(showCreateVariableDialog()));
 // Transform Menu Actions
     QAction* actionMirror = new QAction(this);
     actionMirror->setText("Mirror");
@@ -143,6 +146,7 @@ void MechCAM::buildMenu()
 // Build Create Menu
     // TODO - Build Create Menu
     createMenu = menuBar()->addMenu("Create");
+    createMenu->addAction( actionCreateVariable);
     createMenu->addAction( actionCreatePoint);
 // Build Solids Menu
     // TODO - Build Solids Menu
@@ -210,6 +214,11 @@ void MechCAM::notImplementedMessage()
 
 
 void MechCAM::showCreatePointDialog()
+{
+
+}
+
+void MechCAM::showCreateVariableDialog()
 {
 
 }

@@ -51,6 +51,7 @@ private:
 private slots:
     void showBGColorDialog();
     void showCreatePointDialog();
+    void showCreateVariableDialog();
     void notImplementedMessage();
     void about();
     void showSysConfig();
