@@ -1,7 +1,4 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2011  Larry W Housner <gobhain@gsarmail.com>
-
             This file is part of MechCAM.
 
     MechCAM is free software: you can redistribute it and/or modify
@@ -19,25 +16,3 @@
 */
 
 
-#ifndef LINE_H
-#define LINE_H
-
-#include "types.h"
-#include "point.h"
-
-class Line
-{
-
-  public:
-    Line(double xi, double yi, double zi, double xe, double ye, double ze);
-    Line(Line* parent, double xi, double yi, double zi, double xe, double ye, double ze);
-    virtual ~Line();
-    int GetType()const{return LineType;}
-    Point unit_vector;
-    Point start_point;
-    double length;
-    Line* next;
-    Line* prev;
-};
-
-#endif // LINE_H

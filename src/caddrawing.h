@@ -25,6 +25,7 @@
 #include <QGLWidget>
 #include "point.h"
 #include "line.h"
+#include "circle.h"
 
 
 class CADDrawing : public QGLWidget
@@ -38,8 +39,9 @@ public:
   int ClearGreen;
   void setStockOrigin(double x, double y, double z);
   void setStockSize(double width, double length, double thickness);
-  void addPoint(float x, float y, float z);
+  void addPoint(double x, double y, double z);
   void addLine(double xi, double yi, double zi, double xe, double ye, double ze);
+  void addCircle(double x, double y, double z, double r, double i, double j, double k);
   int stockVisible;
 protected:
   void initializeGL();
@@ -47,18 +49,20 @@ protected:
   void paintGL();
 
   void keyPressEvent( QKeyEvent *event );
-
+  void mouseMoveEvent( QMouseEvent *event);
+  void wheelEvent(QWheelEvent *event);
 
 protected slots:
   void timeOut();
   void changeStock(double x_dim, double y_dim, double z_dim, double x_off, double y_off, double z_off);
-
+signals:
+  void mouseMoved(double x, double y, double z);
 private:
   QTimer *m_timer;
   void draw_Axes();
   void draw_points();
   void draw_lines();
-  void draw_circles(float i, float j, float k, float r);
+  void draw_circles();
   void draw_stock();
   void draw_scale_marker();
   double transX;
@@ -71,10 +75,12 @@ private:
   double stock_xdim;
   double stock_ydim;
   double stock_zdim;
+  double position[3];
   int curr_width;
   int curr_height;
   Point* points;
   Line*	 lines;
+  Circle* circles;
 };
 
 

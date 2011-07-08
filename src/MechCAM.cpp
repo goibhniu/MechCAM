@@ -27,13 +27,23 @@
 #include <QtGui/QAction>
 #include <QtGui/QSplitter>
 #include <QtGui/QColorDialog>
+#include <QtGui/QStatusBar>
 #include <QGLWidget>
 #include <QMessageBox>
 #include <QCoreApplication>
 #include <QSettings>
+#include <QFileDialog>
 #include <stdio.h>
 #include "caddrawing.h"
 #include "operationsmanager.h"
+#include "lua_integration.h"
+#include <gp_Sphere.hxx>
+extern "C"{
+#include <lua5.1/lua.h>
+#include <lua5.1/lauxlib.h>
+#include <lua5.1/lualib.h>
+}
+#include "tinyxml/tinyxml.h"
 
 MechCAM::MechCAM()
 {
@@ -41,12 +51,15 @@ MechCAM::MechCAM()
     QCoreApplication::setOrganizationName("GobhainnSaorArmail");
     QCoreApplication::setOrganizationDomain("gobhainnsaorarmail.com");
     QCoreApplication::setApplicationName("MechCAM");
+
     QSplitter* splitter = new QSplitter( this );
     drawing = new CADDrawing(0,this,0);
     ops_man = new OperationsManager(splitter);
-    statusBar();
+    status = statusBar();
     connect(ops_man,SIGNAL(stockUpdated(double,double,double,double,double,double)),
              drawing,SLOT(changeStock(double,double,double,double,double,double)));
+    connect(drawing,SIGNAL(mouseMoved(double,double,double)),
+            this,SLOT(setLocation(double,double,double)));
  //   QLabel* l = new QLabel( splitter );
  //   l->setText( "Hello World!" );
     splitter->addWidget( ops_man );
@@ -55,6 +68,24 @@ MechCAM::MechCAM()
     splitter->setStretchFactor(1,8);
     setCentralWidget( splitter );
     buildMenu();
+    m_statusLeft = new QLabel("Left", this);
+    m_statusLeft->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    m_statusMiddle = new QLabel("Middle", this);
+    m_statusMiddle->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    status->insertWidget(0,m_statusLeft, 1);
+    status->insertWidget(1,m_statusMiddle, 1);
+    luaVM = lua_open();
+    if (NULL == luaVM)
+       {
+          printf("Error Initializing lua\n");
+
+       }
+    luaL_openlibs(luaVM);
+    lua_register(luaVM,"addPoint",l_addPoint);
+    lua_register(luaVM,"addLine",l_addLine);
+    lua_register(luaVM,"addCircle",l_addCircle);
+
+
 
 }
 
@@ -63,12 +94,17 @@ MechCAM::~MechCAM()
     QSettings settings;
     settings.setValue("mainwindow/size", this->size());
     settings.setValue("mainwindow/fullScreen", this->isFullScreen());
+    lua_close(luaVM);
 }
 
 void MechCAM::buildMenu()
 {
 
 // File Menu Actions
+    QAction* actionOpen = new QAction(QIcon::fromTheme("application-exit"),"&Open",this);
+    actionOpen->setShortcut(tr("CTRL+O"));
+    actionOpen->setStatusTip(tr("Open File"));
+    connect(actionOpen,SIGNAL(triggered()),SLOT(fileOpen()));
     QAction* actionQuit = new QAction(QIcon::fromTheme("application-exit"),"&Quit",this);
     actionQuit->setShortcut(tr("CTRL+Q"));
     actionQuit->setStatusTip(tr("Quit Program"));
@@ -133,6 +169,7 @@ void MechCAM::buildMenu()
     connect(actionAbout,SIGNAL(triggered()),SLOT(about()));
 // Build File Menu
     fileMenu = menuBar()->addMenu( "File" );
+    fileMenu->addAction( actionOpen );
     fileMenu->addAction( actionQuit );
 // Build Edit Menu
     // TODO - Build Edit Menu
@@ -215,7 +252,9 @@ void MechCAM::notImplementedMessage()
 
 void MechCAM::showCreatePointDialog()
 {
+    char* strLuaInput = "a = 1 + 1;\nprint( a);\naddLine(1,1,0,-1,-1,0);\naddPoint(-1,a,0);\n";
 
+    luaL_dostring(luaVM, strLuaInput);
 }
 
 void MechCAM::showCreateVariableDialog()
@@ -234,5 +273,77 @@ void MechCAM::about()
    QMessageBox::about(this, tr("About MechCAM"),
             tr("<b>MechCAM</b> Copyright 2011 - Larry W Housner"));
 }
+
+void MechCAM::fileOpen()
+{
+
+
+    QString filename = QFileDialog::getOpenFileName(
+            this,
+            tr("Open File"),
+            QDir::currentPath(),
+            tr("MechCAM files (*.mech);;Lua files (*.lua);;Heeks CAD files (*.heeks);;All files (*.*)") );
+        if( !filename.isNull() )
+        {
+          printf("%s\n", filename.toAscii().constData() );
+          if(filename.contains(QRegExp::QRegExp(tr(".lua$"),Qt::CaseInsensitive,QRegExp::RegExp))){
+               luaL_dofile(luaVM, filename.toAscii().constData());
+            }
+          else if(filename.contains(QRegExp::QRegExp(tr(".heeks$"),Qt::CaseInsensitive,QRegExp::RegExp))) {
+              openXMLFile(filename.toAscii().constData());
+          }
+          else if(filename.contains(QRegExp::QRegExp(tr(".mech$"),Qt::CaseInsensitive,QRegExp::RegExp))) {
+              openXMLFile(filename.toAscii().constData());
+          }
+
+        }
+}
+
+void MechCAM::setLocation(double x, double y, double z)
+{
+    QString locdata = tr("X = ");
+    locdata.append(QString::number(x,'f',5));
+    locdata.append(tr(" Y = "));
+    locdata.append(QString::number(y,'f',5));
+    locdata.append(tr(" Z = "));
+    locdata.append(QString::number(z,'f',5));
+    m_statusLeft->setText(locdata);
+
+}
+
+void MechCAM::openXMLFile(const char *filepath)
+{
+        TiXmlDocument doc(filepath);
+        if (!doc.LoadFile())
+        {
+                if(doc.Error())
+                {
+                    QMessageBox::warning(this,tr("Error Loading"),doc.ErrorDesc(),QMessageBox::Ok,QMessageBox::NoButton);
+                }
+                return;
+        }
+
+
+
+        TiXmlHandle hDoc(&doc);
+        TiXmlElement* pElem;
+
+        pElem=hDoc.FirstChildElement().Element();
+        if (!pElem) return;
+        std::string name(pElem->Value());
+        if(name == "HeeksCAD_Document")
+        {
+                readHeeksFile(pElem);
+        } else
+        if(name == "MechCAM-Document")
+        {
+                readMechCAMFile(pElem);
+        }
+
+
+
+
+}
+
 
 #include "MechCAM.moc"

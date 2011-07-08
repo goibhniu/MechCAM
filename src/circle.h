@@ -1,7 +1,4 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2011  Larry W Housner <gobhain@gsarmail.com>
-
             This file is part of MechCAM.
 
     MechCAM is free software: you can redistribute it and/or modify
@@ -18,26 +15,32 @@
     along with MechCAM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#ifndef POINT_H
-#define POINT_H
+#ifndef CIRCLE_H
+#define CIRCLE_H
 
 #include "types.h"
 
-class Point
+class Circle
 {
-
-  public:
-    Point();
-    Point(double x, double y, double z);
-    Point(Point* parent, double x, double y, double z);
-    virtual ~Point();
-    int GetType()const{return PointType;}
+public:
+    Circle();
+    Circle(double x, double y, double z, double r, double i, double j, double k);
+    Circle(double x, double y, double z, double r, double i, double j, double k, double begin, double end);
+    Circle(Circle* parent, double x, double y, double z, double r, double i, double j, double k);
+    Circle(Circle* parent, double x, double y, double z, double r, double i, double j, double k, double begin, double end);
+    virtual ~Circle();
+    int GetType()const{return CircleType;}
     double X;
     double Y;
     double Z;
-    Point* next;
-    Point* prev;
+    double R;
+    double I;
+    double J;
+    double K;
+    double Begin;
+    double End;
+    Circle* next;
+    Circle* prev;
 };
 
-#endif // POINT_H
+#endif // CIRCLE_H

@@ -19,11 +19,12 @@
 #include <QtGui/QApplication>
 #include "MechCAM.h"
 
+MechCAM *foo;
 
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    MechCAM foo;
-    foo.show();
+    foo = new MechCAM();
+    foo->show();
     return app.exec();
 }

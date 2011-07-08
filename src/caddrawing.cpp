@@ -24,6 +24,7 @@
 #include <qgl.h>
 #include <GL/gl.h>	// Header File For The OpenGL32 Library
 #include <GL/glu.h>	// Header File For The GLu32 Library
+#include <gp_Pnt.hxx>
 
 CADDrawing::CADDrawing( int timerInterval, QWidget* parent, char* name ): QGLWidget(  parent )
 {
@@ -34,6 +35,7 @@ CADDrawing::CADDrawing( int timerInterval, QWidget* parent, char* name ): QGLWid
   t->start( timerInterval );
   connect( t, SIGNAL( timeout(  ) ),
                    this, SLOT( timeOut()) );
+  this->setMouseTracking(true);
 }
 
 void CADDrawing::initializeGL()
@@ -58,19 +60,7 @@ void CADDrawing::initializeGL()
         glShadeModel(GL_SMOOTH);
         glDepthRange(0.0f,1.0f);
         draw_Axes();
-        addPoint(1,1,0);
-        addPoint(2,2,0);
-        addPoint(1,2,0);
-        addPoint(2,1,0);
-        addPoint(1,0,0);
-        addPoint(2,0,0);
-        addPoint(0,1,0);
-        addPoint(0,2,0);
-        addLine(4,0,0,4,8,0);
-        addLine(8,12,0,12,12,0);
-        addLine(14,5,0,14,10,0);
-        addLine(0,2,0,11,2,0);
-        addLine(4,8,0,8,12,0);
+
         glTranslated(-2.5, -2.5, 0);
 }
 
@@ -98,6 +88,7 @@ void CADDrawing::timeOut()
 
 void CADDrawing::paintGL()
 {
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
   glTranslated(transX,transY,transZ);
@@ -107,10 +98,10 @@ void CADDrawing::paintGL()
   draw_stock();
   draw_points();
   draw_lines();
-  draw_circles(14,2,0,3);
-  draw_circles(12,10,0,2);
+  draw_circles();
   draw_scale_marker();
-  renderText(50,50,QString::number(zoomlevel,'f',-1));
+
+
   glMatrixMode(GL_MODELVIEW);
 }
 
@@ -177,21 +168,28 @@ void CADDrawing::draw_lines()
 }
 
 
-void CADDrawing::draw_circles(float i, float j, float k, float r)
+void CADDrawing::draw_circles()
 {
+  Circle *tmp;
   float circle_x,circle_y;
-    glBegin(GL_LINES);
-    for (int foo = 0; foo < 180; foo++)
+  if (circles != 0){
+  tmp = circles;
+  do {
+  glBegin(GL_LINES);
+    for (int foo = (int)(tmp->Begin/2); foo < (int)(tmp->End/2); foo++)
     {
-    circle_x = r * cos(foo);// - h;
-    circle_y = r * sin(foo);// + k;
-    glVertex3f(circle_x + i,j - circle_y,0);
+    circle_x = tmp->R * cos(foo);// - h;
+    circle_y = tmp->R * sin(foo);// + k;
+    glVertex3f(circle_x + tmp->X,tmp->Y - circle_y,0);
 
-    circle_x = r * cos(foo + 0.1);// - h;
-    circle_y = r * sin(foo + 0.1);// + k;
-    glVertex3f(circle_x + i,j - circle_y,0);
+    circle_x = tmp->R * cos(foo + 0.1);// - h;
+    circle_y = tmp->R * sin(foo + 0.1);// + k;
+    glVertex3f(circle_x + tmp->X,tmp->Y - circle_y,0);
     }
     glEnd();
+    tmp = tmp->next;
+}while(tmp !=0);
+}
 }
 
 void CADDrawing::draw_stock()
@@ -234,10 +232,7 @@ void CADDrawing::draw_scale_marker()
 
     xscale = this->width()/this->physicalDpiX();
     yscale = this->height()/this->physicalDpiY();
-    renderText(this->width()-75,this->height()-100,QString::number(xscale,10));
-    renderText(this->width()-75,this->height()-50,QString::number(yscale,10));
-    renderText(25,this->height()-100,QString::number(transX,'f',-1));
-    renderText(25,this->height()-50,QString::number(transY,'f',-1));
+
     glBegin(GL_LINES);
         glVertex3d((xscale-1)-(transX*xscale),(0.5*yscale)-(1*yscale)-(transY*yscale),0);
         glVertex3d(xscale-(transX*xscale),(0.5*yscale)-(1*yscale)-(transY*yscale),0);
@@ -274,9 +269,10 @@ void CADDrawing::keyPressEvent(QKeyEvent* event)
    }
 }
 
-void CADDrawing::addPoint(float x, float y, float z)
+void CADDrawing::addPoint(double x, double y, double z)
 {
   Point* tmp;
+  gp_Pnt *pnt;
   if (points != 0) {
     if (points->next == 0) {
       points->next= new Point(points,x,y,z);
@@ -290,6 +286,7 @@ void CADDrawing::addPoint(float x, float y, float z)
   } else {
     points = new Point(x,y,z);
   }
+  pnt = new gp_Pnt(x,y,z);
 }
 
 void CADDrawing::addLine(double xi, double yi, double zi, double xe, double ye, double ze)
@@ -310,6 +307,24 @@ void CADDrawing::addLine(double xi, double yi, double zi, double xe, double ye, 
   }
 }
 
+void CADDrawing::addCircle(double x, double y, double z, double r, double i, double j, double k)
+{
+  Circle* tmp;
+  if (circles != 0) {
+    if (circles->next == 0) {
+      circles->next= new Circle(circles,x,y,z,r,i,j,k);
+    } else {
+      tmp = circles->next;
+      while (tmp->next != 0 ) {
+        tmp = tmp->next;
+      }
+      tmp->next = new Circle(tmp,x,y,z,r,i,j,k);
+    }
+  } else {
+    circles = new Circle(x,y,z,r,i,j,k);
+  }
+}
+
 void CADDrawing::changeStock(double x_dim, double y_dim, double z_dim, double x_off, double y_off, double z_off)
 {
     stock_origin_x = x_off;
@@ -319,5 +334,63 @@ void CADDrawing::changeStock(double x_dim, double y_dim, double z_dim, double x_
     stock_ydim = y_dim;
     stock_zdim = z_dim;
 }
+
+void CADDrawing::mouseMoveEvent(QMouseEvent *event)
+{
+
+
+       glLoadIdentity();
+       //only if left mouse button is down
+       // (set in the mouse press event for example)
+          //****
+          //project window coords to gl coord
+          //*****
+
+          GLdouble modelMatrix[16];
+          glGetDoublev(GL_MODELVIEW_MATRIX,modelMatrix);
+          GLdouble projMatrix[16];
+          glGetDoublev(GL_PROJECTION_MATRIX,projMatrix);
+          int viewport[4];
+          glGetIntegerv(GL_VIEWPORT,viewport);
+          gluUnProject(
+             event->x(),
+             event->y(),
+             0,
+             modelMatrix,
+             projMatrix,
+             viewport,
+             //the next 3 parameters are the pointers to the final object
+             //coordinates. Notice that these MUST be double's
+             &position[0], //-&gt; pointer to your own position (optional)
+             &position[1], // id
+             &position[2] // id
+          );
+          //coords of the object are now saved in position.
+          double xscale,yscale;
+
+         xscale = (double)this->width()/(double)this->physicalDpiX();
+         yscale = (double)this->height()/(double)this->physicalDpiY();
+        emit mouseMoved((position[0]-transX)*(xscale/zoomlevel),(position[1]-transY)*(yscale/zoomlevel),position[2]);
+
+}
+
+void CADDrawing::wheelEvent(QWheelEvent *event)
+ {
+     int numDegrees = event->delta() / 8;
+     int numSteps = numDegrees / 15;
+
+     if (event->delta() < 0 ) {
+        zoomlevel -= 0.01;
+
+        updateGL();
+     }
+     if (event->delta() >= 0 ) {
+        zoomlevel += 0.01;
+        updateGL();
+     }
+     event->accept();
+ }
+
+
 
 #include "caddrawing.moc"
