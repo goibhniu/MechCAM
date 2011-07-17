@@ -23,8 +23,9 @@
 #define POINT_H
 
 #include "types.h"
+#include "CADObject.h"
 
-class Point
+class Point: public CADObject
 {
 
   public:
@@ -33,11 +34,15 @@ class Point
     Point(Point* parent, double x, double y, double z);
     virtual ~Point();
     int GetType()const{return PointType;}
+    QColor* GetColor();
+    void SetColor(const QColor &color);
+    void glCommands(bool select, bool marked, bool no_color);
+
     double X;
     double Y;
     double Z;
-    Point* next;
-    Point* prev;
+  private:
+    QColor *MyColor;
 };
 
 #endif // POINT_H

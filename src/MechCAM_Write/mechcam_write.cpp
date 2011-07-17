@@ -16,3 +16,62 @@
 */
 
 
+#include "mechcam_write.h"
+#include <MechCAM.h>
+#include <iostream>
+#include "stdio.h"
+#include <strings.h>
+extern "C"{
+#include <lua5.1/lua.h>
+#include <lua5.1/lauxlib.h>
+#include <lua5.1/lualib.h>
+}
+
+extern MechCAM *foo;
+
+void writeMechCAMFile(TiXmlNode* root)
+{
+    TiXmlElement* bar;
+
+    char oldlocale[1000];
+    strcpy(oldlocale, setlocale(LC_NUMERIC, "C"));
+
+    setlocale(LC_NUMERIC, oldlocale);
+}
+
+void writeArc(TiXmlNode* data)
+{
+
+}
+
+void writeCircle(TiXmlNode* data)
+{
+
+
+}
+
+void writeLine(TiXmlNode* data)
+{
+
+
+}
+
+void writePoint(TiXmlNode* data)
+{
+
+
+}
+
+void writeVariable(TiXmlNode* data)
+{
+
+
+        TiXmlElement * element;
+    	element = new TiXmlElement( "Variable" );
+    	data->LinkEndChild( element );
+
+    	element->SetAttribute("name", "stuff");
+    	element->SetAttribute("value", "things");
+
+
+}

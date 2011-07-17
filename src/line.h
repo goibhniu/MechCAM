@@ -33,8 +33,8 @@ class Line
     Line(Line* parent, double xi, double yi, double zi, double xe, double ye, double ze);
     virtual ~Line();
     int GetType()const{return LineType;}
-    Point unit_vector;
-    Point start_point;
+    double x1,y1,z1;
+    double x2,y2,z2;
     double length;
     Line* next;
     Line* prev;

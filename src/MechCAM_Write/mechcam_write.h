@@ -18,4 +18,15 @@
 #ifndef MECHCAM_WRITE_H
 #define MECHCAM_WRITE_H
 
+
+#include "../tinyxml/tinyxml.h"
+
+void writeMechCAMFile(TiXmlNode* root);
+void writeArc(TiXmlNode* data);
+void writeCircle(TiXmlNode* data);
+void writeLine(TiXmlNode* data);
+void writePoint(TiXmlNode* data);
+void writeVariable(TiXmlNode* data);
+
+
 #endif // MECHCAM_WRITE_H

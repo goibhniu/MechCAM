@@ -24,7 +24,6 @@ enum{
         PointType,
         LineType,
         ArcType,
-        ILineType,
         CircleType,
         GripperType,
         VertexType,
@@ -54,7 +53,8 @@ enum{
         HoleType,
         HolePositionsType,
         GearType,
-        ObjectMaximumType,
+        CubeType,
+        ObjectMaximumType
 };
 
 #endif // TYPES_H

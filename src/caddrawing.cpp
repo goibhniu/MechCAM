@@ -32,6 +32,7 @@ CADDrawing::CADDrawing( int timerInterval, QWidget* parent, char* name ): QGLWid
   setFocusPolicy(Qt::StrongFocus);
   points = 0;
   lines  = 0;
+  circles = 0;
   t->start( timerInterval );
   connect( t, SIGNAL( timeout(  ) ),
                    this, SLOT( timeOut()) );
@@ -92,8 +93,13 @@ void CADDrawing::paintGL()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
   glTranslated(transX,transY,transZ);
-  glScalef(((float)this->physicalDpiX()/(float)this->width())*zoomlevel,((float)this->physicalDpiY()/(float)this->height())*zoomlevel, 1* zoomlevel);
-  glRotatef(asin(tan(30)),0.0,0.0f, 1.0f);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+ // gluPerspective(65, (float)this->curr_width/(float)this->curr_height, 1, 1000);
+  glMatrixMode(GL_MODELVIEW);
+
+  glScalef(((float)this->physicalDpiX()/this->curr_width)*zoomlevel,((float)this->physicalDpiY()/this->curr_height)*zoomlevel, 1* zoomlevel);
+  //glRotatef(asin(tan(30)),0.0,0.0f, 1.0f);
   draw_Axes();
   draw_stock();
   draw_points();
@@ -102,7 +108,7 @@ void CADDrawing::paintGL()
   draw_scale_marker();
 
 
-  glMatrixMode(GL_MODELVIEW);
+
 }
 
 void CADDrawing::draw_Axes()
@@ -137,9 +143,10 @@ void CADDrawing::draw_points()
     if (points != 0 ){
       tmp = points;
       glBegin(GL_POINTS);
+		glColor3f(0,0,1);
         glVertex3f(tmp->X,tmp->Y,tmp->Z);
-        while (tmp->next !=0) {
-          tmp = tmp->next;
+        while (tmp->GetFirstChild() !=0) {
+          tmp = (Point *)tmp->GetFirstChild();
           glVertex3f(tmp->X,tmp->Y,tmp->Z);
         }
       glEnd();
@@ -152,16 +159,12 @@ void CADDrawing::draw_lines()
     if (lines != 0 ){
       tmp = lines;
       glBegin(GL_LINES);
-        glVertex3f(tmp->start_point.X,tmp->start_point.Y,tmp->start_point.Z);
-        glVertex3f(tmp->start_point.X + tmp->unit_vector.X*tmp->length,
-                   tmp->start_point.Y + tmp->unit_vector.Y*tmp->length,
-                   tmp->start_point.Z + tmp->unit_vector.Z*tmp->length);
+        glVertex3f(tmp->x1 ,tmp->y1 ,tmp->z1);
+        glVertex3f(tmp->x2 ,tmp->y2 ,tmp->z2);
         while (tmp->next !=0) {
           tmp = tmp->next;
-          glVertex3f(tmp->start_point.X,tmp->start_point.Y,tmp->start_point.Z);
-          glVertex3f(tmp->start_point.X + tmp->unit_vector.X*tmp->length,
-                     tmp->start_point.Y + tmp->unit_vector.Y*tmp->length,
-                     tmp->start_point.Z + tmp->unit_vector.Z*tmp->length);
+          glVertex3f(tmp->x1 ,tmp->y1 ,tmp->z1);
+          glVertex3f(tmp->x2 ,tmp->y2, tmp->z2);
         }
       glEnd();
     }
@@ -273,8 +276,8 @@ void CADDrawing::addPoint(double x, double y, double z)
 {
   Point* tmp;
   gp_Pnt *pnt;
-  if (points != 0) {
-    if (points->next == 0) {
+ /* if (points != 0) {
+    if (points->GetFirstChild() == 0) {
       points->next= new Point(points,x,y,z);
     } else {
       tmp = points->next;
@@ -285,7 +288,7 @@ void CADDrawing::addPoint(double x, double y, double z)
     }
   } else {
     points = new Point(x,y,z);
-  }
+  } */
   pnt = new gp_Pnt(x,y,z);
 }
 
