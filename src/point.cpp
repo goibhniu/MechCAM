@@ -50,14 +50,9 @@ Point::~Point() {
 
 // Color Functions
 
-QColor* Point::GetColor() {
-	return MyColor;
-}
 
-void Point::SetColor(const QColor &color)
-{
-	MyColor->operator =(color);
-}
+
+
 
 void Point::glCommands(bool select, bool marked, bool no_color)
 {
@@ -81,6 +76,7 @@ void Point::glCommands(bool select, bool marked, bool no_color)
 
 
 		glBegin(GL_POINTS);
+		glColor3f(0,0,1);
 		glVertex3d(X, Y, Z);
 		glEnd();
 
@@ -93,6 +89,52 @@ void Point::glCommands(bool select, bool marked, bool no_color)
 	{
 			glDisable(GL_LINE_STIPPLE);
 	}
+}
+
+const Point& Point::operator=(const Point &CADObj)
+{
+	// don't copy the ID or the owner
+	layer = CADObj.layer;
+	visible = CADObj.visible;
+	skip_for_undo = CADObj.skip_for_undo;
+
+	if(CADObj.preserving_id)
+		id = CADObj.id;
+
+	return *this;
+}
+
+
+
+/*
+ * Load and Store Functions
+ */
+CADObject* Point::MakeACopy() const{
+
+}
+
+void Point::ModifyByMatrix(double const*){
+
+}
+
+bool Point::GetStartPoint(double*){
+
+}
+
+bool Point::GetEndPoint(double*){
+
+}
+
+const QBitmap& Point::GetIcon(){
+
+}
+
+bool Point::IsDifferent(CADObject*){
+
+}
+
+void Point::WriteXML(TiXmlNode*){
+
 }
 
 

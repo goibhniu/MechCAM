@@ -119,6 +119,7 @@ public:
 	virtual void SetIdPreservation(const bool flag) { preserving_id = flag; }
 	virtual void ToString(char* buf, unsigned int* rlen, unsigned int len);
 	virtual unsigned int GetIndex();
+
 };
 
 

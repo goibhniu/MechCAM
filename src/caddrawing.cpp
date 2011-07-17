@@ -25,6 +25,7 @@
 #include <GL/gl.h>	// Header File For The OpenGL32 Library
 #include <GL/glu.h>	// Header File For The GLu32 Library
 #include <gp_Pnt.hxx>
+#include <algorithm>
 
 CADDrawing::CADDrawing( int timerInterval, QWidget* parent, char* name ): QGLWidget(  parent )
 {
@@ -106,6 +107,14 @@ void CADDrawing::paintGL()
   draw_lines();
   draw_circles();
   draw_scale_marker();
+  for(std::list<CADObject*>::iterator It=objects.begin(); It!=objects.end() ;It++)
+  	{
+  		CADObject* object = *It;
+  		//if(object->OnVisibleLayer() && object->visible)
+  		//{
+  			object->glCommands(false, false, false);
+  		//}
+  	}
 
 
 
@@ -272,24 +281,47 @@ void CADDrawing::keyPressEvent(QKeyEvent* event)
    }
 }
 
+bool CADDrawing::add(CADObject *obj, CADObject *prev_obj){
+	if (obj==NULL) return false;
+//	if (!CanAdd(obj)) return false;
+	if (std::find(objects.begin(), objects.end(), obj) != objects.end()) return true; // It's already here.
+
+	if(obj->GetType() == PointType){
+		printf("\nAdding Point\n");
+	}
+	if (objects.size()==0 || prev_obj==NULL)
+	{
+		objects.push_back(obj);
+		LoopIt = objects.end();
+		LoopIt--;
+	}
+	else
+	{
+		for(LoopIt = objects.begin(); LoopIt != objects.end(); LoopIt++) { if (*LoopIt==prev_obj) break; }
+		objects.insert(LoopIt, obj);
+	}
+	index_list_valid = false;
+	//objects->add(obj, prev_obj);
+
+/*
+	if(((!heeksCAD->InOpenFile() || !heeksCAD->FileOpenTypeHeeks() || heeksCAD->InPaste()) && object->UsesID() && (object->m_id == 0 || (heeksCAD->FileOpenTypeHeeks() && heeksCAD->InOpenFile()))))
+	{
+		object->SetID(heeksCAD->GetNextID(object->GetIDGroupType()));
+	}
+*/
+	return true;
+}
+
 void CADDrawing::addPoint(double x, double y, double z)
 {
-  Point* tmp;
+
+  Point *tmp;
   gp_Pnt *pnt;
- /* if (points != 0) {
-    if (points->GetFirstChild() == 0) {
-      points->next= new Point(points,x,y,z);
-    } else {
-      tmp = points->next;
-      while (tmp->next != 0 ) {
-        tmp = tmp->next;
-      }
-      tmp->next = new Point(tmp,x,y,z);
-    }
-  } else {
-    points = new Point(x,y,z);
-  } */
+
+  tmp = new Point(x,y,z);
+
   pnt = new gp_Pnt(x,y,z);
+  add(tmp,NULL);
 }
 
 void CADDrawing::addLine(double xi, double yi, double zi, double xe, double ye, double ze)

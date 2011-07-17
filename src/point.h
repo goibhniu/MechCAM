@@ -32,17 +32,41 @@ class Point: public CADObject
     Point();
     Point(double x, double y, double z);
     Point(Point* parent, double x, double y, double z);
-    virtual ~Point();
+    ~Point();
     int GetType()const{return PointType;}
     QColor* GetColor();
-    void SetColor(const QColor &color);
     void glCommands(bool select, bool marked, bool no_color);
+    const Point& operator=(const Point &CADObj);
+
+    	// virtual functions
+
+
+
+
+ //   	long GetMarkingMask()const{return MARKING_FILTER_POINT;}
+ //   	void GetBox(CBox &box);
+    	const QChar* GetTypeString(void)const{return QString::fromAscii("Point",5).constData();}
+    	CADObject *MakeACopy(void)const;
+    	const QBitmap &GetIcon();
+    	void ModifyByMatrix(const double *mat);
+    	void SetColor(const QColor &col){color = col;}
+    	const QColor* GetColor()const{return &color;}
+ //   	void GetGripperPositions(std::list<GripData> *list, bool just_for_endof);
+ //   	void GetProperties(std::list<Property *> *list);
+    	bool GetStartPoint(double* pos);
+    	bool GetEndPoint(double* pos);
+    	void CopyFrom(const CADObject* object){operator=(*((Point*)object));}
+    	void WriteXML(TiXmlNode *root);
+    	void LoadFromDoubles();
+    	void LoadToDoubles();
+    	bool IsDifferent(CADObject* other);
+//    	void GetTools(std::list<Tool*>* t_list, const wxPoint* p);
 
     double X;
     double Y;
     double Z;
   private:
-    QColor *MyColor;
+    QColor color;
 };
 
 #endif // POINT_H

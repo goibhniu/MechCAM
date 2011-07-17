@@ -39,6 +39,7 @@ public:
   int ClearGreen;
   void setStockOrigin(double x, double y, double z);
   void setStockSize(double width, double length, double thickness);
+  bool add(CADObject *obj, CADObject *prev_obj);
   void addPoint(double x, double y, double z);
   void addLine(double xi, double yi, double zi, double xe, double ye, double ze);
   void addCircle(double x, double y, double z, double r, double i, double j, double k);
@@ -78,6 +79,9 @@ private:
   double position[3];
   int curr_width;
   int curr_height;
+  bool index_list_valid;
+  std::list<CADObject*> objects;
+  std::list<CADObject*>::iterator LoopIt;
   Point* points;
   Line*	 lines;
   Circle* circles;
