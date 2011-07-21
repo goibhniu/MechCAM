@@ -61,7 +61,6 @@ signals:
 private:
   QTimer *m_timer;
   void draw_Axes();
-  void draw_points();
   void draw_lines();
   void draw_circles();
   void draw_stock();
@@ -82,9 +81,7 @@ private:
   bool index_list_valid;
   std::list<CADObject*> objects;
   std::list<CADObject*>::iterator LoopIt;
-  Point* points;
-  Line*	 lines;
-  Circle* circles;
+  CADObject *stock;
 };
 
 

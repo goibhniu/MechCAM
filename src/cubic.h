@@ -1,8 +1,5 @@
 /*
- <one line to give the program's name and a brief idea of what it does.>
- Copyright (C) 2011  Larry W Housner <gobhain@gsarmail.com>
-
- This file is part of MechCAM.
+ * 					cubic.h is part of MechCAM.
 
  MechCAM is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -16,28 +13,20 @@
 
  You should have received a copy of the GNU General Public License
  along with MechCAM.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  Created on: Jul 19, 2011
+ *      Author: lhousner
  */
 
-#ifndef LINE_H
-#define LINE_H
+#ifndef CUBIC_H_
+#define CUBIC_H_
 
-#include "types.h"
-#include "point.h"
+#include "CADObject.h"
 
-class Line: public CADObject {
-
+class Cubic: public CADObject {
 public:
-	Point *P1, *P2;
-	Line(double xi, double yi, double zi, double xe, double ye, double ze);
-	Line(Line* parent, double xi, double yi, double zi, double xe, double ye,
-			double ze);
-	virtual ~Line();
-	int GetType() const {
-		return LineType;
-	}
-	CADObject* MakeACopy() const;
-	void glCommands(bool, bool, bool);
-
+	Cubic();
+	virtual ~Cubic();
 };
 
-#endif // LINE_H
+#endif /* CUBIC_H_ */

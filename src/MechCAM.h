@@ -62,6 +62,7 @@ private:
 private slots:
     void setLocation(double x, double y, double z);
     void showBGColorDialog();
+    void showCreateCircleDialog();
     void showCreatePointDialog();
     void showCreateVariableDialog();
     void notImplementedMessage();

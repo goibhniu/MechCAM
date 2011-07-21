@@ -44,6 +44,8 @@ extern "C"{
 #include <lua5.1/lualib.h>
 }
 #include "tinyxml/tinyxml.h"
+#include "circle.h"
+
 
 MechCAM::MechCAM()
 {
@@ -113,6 +115,9 @@ void MechCAM::buildMenu()
     QAction* actionCreatePoint = new QAction(this);
     actionCreatePoint->setText("Point");
     connect(actionCreatePoint,SIGNAL(triggered()), SLOT(showCreatePointDialog()));
+    QAction* actionCreateCircle = new QAction(this);
+    actionCreateCircle->setText("Circle");
+    connect(actionCreateCircle,SIGNAL(triggered()), SLOT(showCreateCircleDialog()));
     QAction* actionCreateVariable = new QAction(this);
     actionCreateVariable->setText("Variable");
     connect(actionCreateVariable,SIGNAL(triggered()), SLOT(showCreateVariableDialog()));
@@ -183,8 +188,9 @@ void MechCAM::buildMenu()
 // Build Create Menu
     // TODO - Build Create Menu
     createMenu = menuBar()->addMenu("Create");
-    createMenu->addAction( actionCreateVariable);
-    createMenu->addAction( actionCreatePoint);
+    createMenu->addAction( actionCreateVariable );
+    createMenu->addAction( actionCreatePoint );
+    createMenu->addAction( actionCreateCircle );
 // Build Solids Menu
     // TODO - Build Solids Menu
     solidsMenu = menuBar()->addMenu("Solids");
@@ -249,12 +255,19 @@ void MechCAM::notImplementedMessage()
 
  }
 
+void MechCAM::showCreateCircleDialog()
+{
+	Circle *tmp = new Circle();
+	tmp->getDialog(this);
+	drawing->add(tmp,NULL);
+
+}
 
 void MechCAM::showCreatePointDialog()
 {
-    char* strLuaInput = "a = 1 + 1;\nprint( a);\naddLine(1,1,0,-1,-1,0);\naddPoint(-1,a,0);\n";
+    //char* strLuaInput = "a = 1 + 1;\nprint( a);\naddLine(1,1,0,-1,-1,0);\naddPoint(-1,a,0);\n";
 
-    luaL_dostring(luaVM, strLuaInput);
+    //luaL_dostring(luaVM, strLuaInput);
 }
 
 void MechCAM::showCreateVariableDialog()

@@ -17,40 +17,19 @@
 
 #include "line.h"
 #include <math.h>
+#include <GL/gl.h>
 #include "point.h"
 
 Line::Line(double xi, double yi, double zi,double xe, double ye, double ze)
 {
-  double xd,yd,zd;
-  xd = xe-xi;
-  yd = ye-yi;
-  zd = ze-zi;
-  x1 = xi;
-  y1 = yi;
-  z1 = zi;
-  x2 = xd;
-  y2 = yd;
-  z2 = zd;
-  prev = 0;
-  next = 0;
+
+	P1 = new Point(xi,yi,zi);
+	P2 = new Point(xe,ye,ze);
 }
 
 Line::Line(Line* parent, double xi, double yi, double zi, double xe, double ye, double ze)
 {
-  double xd,yd,zd;
-  xd = xe-xi;
-  yd = ye-yi;
-  zd = ze-zi;
-  length = sqrt(xd*xd + yd*yd + zd*zd);
-  x1 = xi;
-  y1 = yi;
-  z1 = zi;
-  x2 = xd;
-  y2 = yd;
-  z2 = zd;
-  prev = parent;
-  parent->next = this;
-  next = 0;
+
 }
 
 Line::~Line()
@@ -59,8 +38,46 @@ Line::~Line()
 }
 
 
+CADObject* Line::MakeACopy() const{
+
+}
+
+void Line::glCommands(bool select, bool marked, bool no_color)
+{
+	if(!no_color)
+	{
+		//wxGetApp().glColorEnsuringContrast(color);
+		//if (wxGetApp().m_allow_opengl_stippling)
+		//{
+		//	glEnable(GL_LINE_STIPPLE);
+		//	glLineStipple(3, 0xaaaa);
+		//}
+	}
+	GLfloat save_depth_range[2];
+	if(marked)
+	{
+		glGetFloatv(GL_DEPTH_RANGE, save_depth_range);
+		glDepthRange(0, 0);
+		glLineWidth(2);
+	}
 
 
 
+		glBegin(GL_LINES);
+		glColor3f(0,0,1);
+		glVertex3d(P1->X, P1->Y, P1->Z);
+		glVertex3d(P2->X, P2->Y, P2->Z);
+		glEnd();
+
+	if(marked)
+	{
+		glLineWidth(1);
+		glDepthRange(save_depth_range[0], save_depth_range[1]);
+	}
+	if(!no_color)
+	{
+			glDisable(GL_LINE_STIPPLE);
+	}
+}
 
 //#include "line.moc"

@@ -7,65 +7,62 @@
 
 #include "CADObject.h"
 
-CADObject::CADObject(){
+CADObject::CADObject() {
 
 }
 
-CADObject::~CADObject(){
+CADObject::~CADObject() {
 
 }
 
-const CADObject& CADObject::operator=(const CADObject &CADObj)
-{
+const CADObject& CADObject::operator=(const CADObject &CADObj) {
 	// don't copy the ID or the owner
 	layer = CADObj.layer;
 	visible = CADObj.visible;
 	skip_for_undo = CADObj.skip_for_undo;
 
-	if(CADObj.preserving_id)
+	if (CADObj.preserving_id)
 		id = CADObj.id;
 
 	return *this;
 }
 
-CADObject *CADObject::MakeACopyWithID(){
+CADObject *CADObject::MakeACopyWithID() {
 
 }
 
-bool CADObject::GetScaleAboutMatrix(double *){
+bool CADObject::GetScaleAboutMatrix(double *) {
 	return false;
 }
 
-const QBitmap& CADObject::GetIcon(){
+const QBitmap& CADObject::GetIcon() {
 
 }
 
+bool CADObject::Add(CADObject* object, CADObject* prev_object) {
 
-bool CADObject::Add(CADObject* object, CADObject* prev_object){
-
-		object->AddOwner(this);
-		object->OnAdd();
-		return true;
-
+	object->AddOwner(this);
+	object->OnAdd();
+	return true;
 
 }
 
-void CADObject::OnRemove(){
+void CADObject::OnRemove() {
 
 }
 
 /*
  * Load and Store Functions
  */
-void CADObject::ReadBaseXML(TiXmlElement*){
+void CADObject::ReadBaseXML(TiXmlElement*) {
 
 }
 
-void CADObject::WriteBaseXML(TiXmlElement*){
+void CADObject::WriteBaseXML(TiXmlElement*) {
 
 }
 
-bool CADObject::StretchTemporaryTransformed(double const*, double const*, void*){
+bool CADObject::StretchTemporaryTransformed(double const*, double const*, void*) {
 
 }
 
@@ -73,69 +70,68 @@ bool CADObject::StretchTemporaryTransformed(double const*, double const*, void*)
  * Ownership Functions
  */
 
-CADObject* CADObject::Owner(){
+CADObject* CADObject::Owner() {
 
 }
 
-void CADObject::SetOwner(CADObject*){
+void CADObject::SetOwner(CADObject*) {
 
 }
 
-std::list<CADObject*, std::allocator<CADObject*> > CADObject::Owners(){
+std::list<CADObject*, std::allocator<CADObject*> > CADObject::Owners() {
 
 }
 
-bool CADObject::HasOwner(){
+bool CADObject::HasOwner() {
 
 }
 
-bool CADObject::HasOwner(CADObject *){
+bool CADObject::HasOwner(CADObject *) {
 
 }
 
-
-
-void CADObject::AddOwner(CADObject* obj){
-	for (std::list<CADObject*>::iterator it = owners.begin(); it != owners.end(); it++)
-	{
-		if (*it == obj) return;	// It's already here.
+void CADObject::AddOwner(CADObject* obj) {
+	for (std::list<CADObject*>::iterator it = owners.begin(); it
+			!= owners.end(); it++) {
+		if (*it == obj)
+			return; // It's already here.
 	}
 
 	owners.push_back(obj);
 }
 
-CADObject* CADObject::Find(int, unsigned int){
+CADObject* CADObject::Find(int, unsigned int) {
 
 }
 
-void CADObject::ToString(char*, unsigned int*, unsigned int){
+void CADObject::ToString(char*, unsigned int*, unsigned int) {
 
 }
 
-unsigned int CADObject::GetIndex(){
+unsigned int CADObject::GetIndex() {
 
 }
 
-void CADObject::AddOwners(std::list<CADObject*, std::allocator<CADObject*> >){
+void CADObject::AddOwners(std::list<CADObject*, std::allocator<CADObject*> >) {
 
 }
 
-void CADObject::RemoveOwners(){
+void CADObject::RemoveOwners() {
 
 }
 
-void CADObject::RemoveOwner(CADObject*){
+void CADObject::RemoveOwner(CADObject*) {
 
 }
 
-CADObject*  CADObject::GetFirstOwner(){
+CADObject* CADObject::GetFirstOwner() {
 
 }
 
-CADObject*  CADObject::GetNextOwner(){
+CADObject* CADObject::GetNextOwner() {
 
 }
 
-bool CADObject::OnVisibleLayer(){
+bool CADObject::OnVisibleLayer() {
 	return false;
 }
